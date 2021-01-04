@@ -15,7 +15,9 @@ import {
 import { Response } from 'express';
 import { Observable, of } from 'rxjs';
 import { CreateCatDto } from './dto/create-cat.dto';
-import {CatsService} from "./cats.service";
+import { CatsService } from './cats.service';
+import { Cat } from './interfaces/cat.interface';
+
 //import { Request } from 'express';
 
 @Controller('cats')
@@ -34,6 +36,11 @@ export class CatsController {
     this.catsService.create(createCatDto);
   }
 
+  @Get()
+  async findAllWithPromise(): Promise<Cat[]> {
+    return this.catsService.findAll();
+  }
+
   // Method which use @Res
   // @Post()
   // create(@Res() res: Response) {
@@ -46,7 +53,7 @@ export class CatsController {
     return [];
   }
 
-  @Get('ab*cd')
+  @Get('ab.*cd')
   find() {
     return 'This route uses a wildcard';
   }
