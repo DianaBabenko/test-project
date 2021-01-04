@@ -10,14 +10,25 @@ import { AdminController } from './admin/admin.controller';
 import { UsersModule } from './users/users.module';
 import { HttpService } from './http/http.service';
 import { CatsModule } from './cats/cats.module';
-//mport { LoggerMiddleware } from './logger.middleware';
+//import { LoggerMiddleware } from './logger.middleware';
 import { CatsController } from './cats/cats.controller';
 import { logger } from './logger.middleware';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './http-exception.filter';
+import { AllExceptionsFilterExample } from './all-exceptions-filter.filter';
 
 @Module({
   imports: [UsersModule, CatsModule],
   controllers: [AppController, AdminController],
-  providers: [AppService, HttpService],
+  providers: [
+    AppService,
+    HttpService,
+    //register global filters from outside of any modules
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: AllExceptionsFilterExample,
+    // },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

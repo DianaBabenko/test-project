@@ -3,24 +3,29 @@ import {
   Get,
   //Req,
   Post,
-  HttpCode,
-  Header,
+  //HttpCode,
+  //Header,
   Redirect,
   Query,
   Param,
   Body,
-  Res,
-  HttpStatus,
+  UseFilters,
+  //Res,
+  //HttpStatus,
+  //HttpException,
 } from '@nestjs/common';
-import { Response } from 'express';
+//import { Response } from 'express';
 import { Observable, of } from 'rxjs';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { CatsService } from './cats.service';
-import { Cat } from './interfaces/cat.interface';
+//import { Cat } from './interfaces/cat.interface';
+import { ForbiddenException } from '../forbidden.exception';
+import { HttpExceptionFilter } from '../http-exception.filter';
 
 //import { Request } from 'express';
 
 @Controller('cats')
+@UseFilters(new HttpExceptionFilter())
 export class CatsController {
   constructor(private catsService: CatsService) {}
   // @Get()
@@ -30,16 +35,19 @@ export class CatsController {
   // }
 
   @Post()
+  //@UseFilters(new HttpExceptionFilter())
   // @HttpCode(204)
   // @Header('Cache-Control', 'none')
   async create(@Body() createCatDto: CreateCatDto) {
     this.catsService.create(createCatDto);
+    throw new ForbiddenException();
   }
 
-  @Get()
-  async findAllWithPromise(): Promise<Cat[]> {
-    return this.catsService.findAll();
-  }
+  // Method which use async & promise
+  // @Get()
+  // async findAllWithPromise(): Promise<Cat[]> {
+  //   return this.catsService.findAll();
+  // }
 
   // Method which use @Res
   // @Post()
@@ -47,10 +55,29 @@ export class CatsController {
   //   res.status(HttpStatus.CREATED).send();
   // }
 
+  // get method with async
+  // @Get()
+  // async findAll(@Res({ passthrough: true }) res: Response) {
+  //   res.status(HttpStatus.OK);
+  //   return [];
+  // }
+
   @Get()
-  findAll(@Res({ passthrough: true }) res: Response) {
-    res.status(HttpStatus.OK);
-    return [];
+  async findAll() {
+    //Throwing standard exceptions
+    //throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+
+    //overriding the entire response body
+    // throw new HttpException(
+    //   {
+    //     status: HttpStatus.FORBIDDEN,
+    //     error: 'This is a custom test message',
+    //   },
+    //   HttpStatus.FORBIDDEN,
+    // );
+
+    //built-in exception handler
+    throw new ForbiddenException();
   }
 
   @Get('ab.*cd')
