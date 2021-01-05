@@ -1,18 +1,20 @@
 import {
-  Controller,
-  Get,
-  //Req,
-  Post,
-  //HttpCode,
-  //Header,
-  Redirect,
-  Query,
-  Param,
   Body,
-  UseFilters,
-  //Res,
+  Controller,
+  //DefaultValuePipe,
+  Get,
+  //Header,
+  //HttpCode,
   //HttpStatus,
-  //HttpException,
+  Param,
+  //ParseBoolPipe,
+  ParseIntPipe,
+  //ParseUUIDPipe,
+  Post,
+  Query,
+  Redirect,
+  UseFilters,
+  //UsePipes,
 } from '@nestjs/common';
 //import { Response } from 'express';
 import { Observable, of } from 'rxjs';
@@ -21,6 +23,8 @@ import { CatsService } from './cats.service';
 //import { Cat } from './interfaces/cat.interface';
 import { ForbiddenException } from '../forbidden.exception';
 import { HttpExceptionFilter } from '../http-exception.filter';
+import { JoiValidationPipe } from '../joi-validation.pipe';
+import { ValidationPipe } from '../validation.pipe';
 
 //import { Request } from 'express';
 
@@ -34,13 +38,26 @@ export class CatsController {
   //   return 'This action returns all cats';
   // }
 
-  @Post()
-  //@UseFilters(new HttpExceptionFilter())
+  // @Post()
+  // @UseFilters(new HttpExceptionFilter())
   // @HttpCode(204)
   // @Header('Cache-Control', 'none')
-  async create(@Body() createCatDto: CreateCatDto) {
+  // async create(@Body() createCatDto: CreateCatDto) {
+  //   this.catsService.create(createCatDto);
+  //   throw new ForbiddenException();
+  // }
+
+  //method post with validation pipe
+  // @Post()
+  // @UsePipes(new JoiValidationPipe(createCatSchema))
+  // async create(@Body() createCatDto: CreateCatDto) {
+  //   this.catsService.create(createCatDto);
+  // }
+
+  //Pipe is called to validate the post body
+  @Post()
+  async create(@Body(new ValidationPipe()) createCatDto: CreateCatDto) {
     this.catsService.create(createCatDto);
-    throw new ForbiddenException();
   }
 
   // Method which use async & promise
@@ -64,6 +81,10 @@ export class CatsController {
 
   @Get()
   async findAll() {
+    // async findAll(
+    //@Query('activeOnly', new DefaultValuePipe(false), ParseBoolPipe) activeOnly: boolean,
+    //@Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
+    // ) {
     //Throwing standard exceptions
     //throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
 
@@ -78,6 +99,8 @@ export class CatsController {
 
     //built-in exception handler
     throw new ForbiddenException();
+
+    //return this.catsService.findAll({activeOnly, page});
   }
 
   @Get('ab.*cd')
@@ -106,9 +129,38 @@ export class CatsController {
   // }
 
   @Get(':id')
-  findOne(@Param('id') id: bigint): string {
+  async findOne(@Param('id', new ParseIntPipe()) id) {
     return `This action returns a #${id} cat`;
   }
+
+  //select an existing user entity
+  // @Get(':id')
+  // findOne(@Param('id', UserByIdPipe) userEntity: UserEntity) {
+  //   return userEntity;
+  // }
+
+  // an in-place instance of Pipe
+  // @Get(':id')
+  // async findOne(
+  //   @Param(
+  //     'id',
+  //     new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+  //   )
+  //   id: number,
+  // ) {
+  //   return `This action returns a #${id} catssss`;
+  // }
+
+  @Get('example')
+  async findOneExample(@Query('id', ParseIntPipe) id: number) {
+    return `This action returns a #${id} cat`;
+  }
+
+  // example 123e4567-e89b-12d3-a456-426655440000
+  // @Get(':uuid')
+  // async findOneUUID(@Param('uuid', new ParseUUIDPipe()) uuid: string) {
+  //   return `This method check if the ( ${uuid} ) is uuid`;
+  // }
 
   @Get('promise')
   async findAllCats(): Promise<any[]> {

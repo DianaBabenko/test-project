@@ -13,9 +13,11 @@ import { CatsModule } from './cats/cats.module';
 //import { LoggerMiddleware } from './logger.middleware';
 import { CatsController } from './cats/cats.controller';
 import { logger } from './logger.middleware';
-import { APP_FILTER } from '@nestjs/core';
-import { HttpExceptionFilter } from './http-exception.filter';
-import { AllExceptionsFilterExample } from './all-exceptions-filter.filter';
+import {APP_PIPE} from "@nestjs/core";
+import {ValidationPipe} from "./validation.pipe";
+//import { APP_FILTER } from '@nestjs/core';
+//import { HttpExceptionFilter } from './http-exception.filter';
+//import { AllExceptionsFilterExample } from './all-exceptions-filter.filter';
 
 @Module({
   imports: [UsersModule, CatsModule],
@@ -27,6 +29,12 @@ import { AllExceptionsFilterExample } from './all-exceptions-filter.filter';
     // {
     //   provide: APP_FILTER,
     //   useClass: AllExceptionsFilterExample,
+    // },
+
+    //set up a global pipe directly from any module
+    // {
+    //   provide: APP_PIPE,
+    //   useClass: ValidationPipe,
     // },
   ],
 })
@@ -47,7 +55,7 @@ export class AppModule implements NestModule {
       .exclude(
         { path: 'cats', method: RequestMethod.GET },
         { path: 'cats', method: RequestMethod.POST },
-        //'cats/(.*)',
+        'cats/(.*)',
       )
       //middleware for all methods in CatsController without that describe in exclude method
       .forRoutes(CatsController);
