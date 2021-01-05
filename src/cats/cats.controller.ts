@@ -13,8 +13,10 @@ import {
   Post,
   Query,
   Redirect,
+  //Req,
   //SetMetadata,
   UseFilters,
+  UseInterceptors,
   //UseGuards,
   //UsePipes,
 } from '@nestjs/common';
@@ -23,26 +25,40 @@ import { Observable, of } from 'rxjs';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { CatsService } from './cats.service';
 //import { Cat } from './interfaces/cat.interface';
-import { ForbiddenException } from '../forbidden.exception';
-import { HttpExceptionFilter } from '../http-exception.filter';
+//import { ForbiddenException } from '../modules/exceptions/forbidden.exception';
+import { HttpExceptionFilter } from '../modules/filters/http-exception.filter';
 //import { JoiValidationPipe } from '../joi-validation.pipe';
 //import { ValidationPipe } from '../validation.pipe';
 //import { RolesGuard } from '../roles/roles.guard';
 import { Roles } from '../roles/roles.decorator';
+import { LoggingInterceptor } from '../modules/interceptors/logging.interceptor';
+import { TransformInterceptor } from '../modules/interceptors/transform.interceptor';
+//import { ExcludeNullInterceptor } from '../modules/interceptors/exclude-null.interceptor';
+//import { ErrorsInterceptor } from '../modules/interceptors/errors.interceptor';
+//import { CacheInterceptor } from '../modules/interceptors/cache.interceptor';
+import { TimeoutInterceptor } from '../modules/interceptors/timeout.interceptor';
 
 //import { Request } from 'express';
 
 @Controller('cats')
 //@UseGuards(RolesGuard)
-// @UseGuards(new RolesGuard())
+//@UseGuards(new RolesGuard())
+//@UseInterceptors(LoggingInterceptor)
+@UseInterceptors(new LoggingInterceptor())
 @UseFilters(new HttpExceptionFilter())
 export class CatsController {
   constructor(private catsService: CatsService) {}
-  // @Get()
-  // @Redirect('cats/ab*cd', 301)
-  // findAll(@Req() request: Request): string {
-  //   return 'This action returns all cats';
-  // }
+  @Get()
+  // @UseInterceptors(ExcludeNullInterceptor)
+  // @UseInterceptors(ErrorsInterceptor)
+  // @UseInterceptors(CacheInterceptor)
+  @UseInterceptors(TimeoutInterceptor)
+  //@Redirect('cats/ab*cd', 301)
+  findAll() {
+    const cats = this.catsService.findAll();
+
+    return cats.length > 0 ? cats : 'cats not found';
+  }
 
   // @Post()
   // @UseFilters(new HttpExceptionFilter())
@@ -93,29 +109,30 @@ export class CatsController {
   //   return [];
   // }
 
-  @Get()
-  async findAll() {
-    // async findAll(
-    //@Query('activeOnly', new DefaultValuePipe(false), ParseBoolPipe) activeOnly: boolean,
-    //@Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
-    // ) {
-    //Throwing standard exceptions
-    //throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+  //@Get()
+  //@UseInterceptors(LoggingInterceptor)
+  //async findAll() {
+  // async findAll(
+  //@Query('activeOnly', new DefaultValuePipe(false), ParseBoolPipe) activeOnly: boolean,
+  //@Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
+  // ) {
+  //Throwing standard exceptions
+  //throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
 
-    //overriding the entire response body
-    // throw new HttpException(
-    //   {
-    //     status: HttpStatus.FORBIDDEN,
-    //     error: 'This is a custom test message',
-    //   },
-    //   HttpStatus.FORBIDDEN,
-    // );
+  //overriding the entire response body
+  // throw new HttpException(
+  //   {
+  //     status: HttpStatus.FORBIDDEN,
+  //     error: 'This is a custom test message',
+  //   },
+  //   HttpStatus.FORBIDDEN,
+  // );
 
-    //built-in exception handler
-    throw new ForbiddenException();
+  //built-in exception handler
+  //throw new ForbiddenException();
 
-    //return this.catsService.findAll({activeOnly, page});
-  }
+  //return this.catsService.findAll({activeOnly, page});
+  //}
 
   @Get('ab.*cd')
   //@UseGuards(RolesGuard)
@@ -144,6 +161,7 @@ export class CatsController {
   // }
 
   @Get(':id')
+  @UseInterceptors(TransformInterceptor)
   async findOne(@Param('id', new ParseIntPipe()) id) {
     return `This action returns a #${id} cat`;
   }

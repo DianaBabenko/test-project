@@ -8,13 +8,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AdminController } from './admin/admin.controller';
 import { UsersModule } from './users/users.module';
-import { HttpService } from './http/http.service';
+import { HttpService } from './modules/services/http.service';
 import { CatsModule } from './cats/cats.module';
 //import { LoggerMiddleware } from './logger.middleware';
 import { CatsController } from './cats/cats.controller';
-import { logger } from './logger.middleware';
-import { APP_GUARD } from '@nestjs/core';
+import { logger } from './modules/middlewares/logger.middleware';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { RolesGuard } from './roles/roles.guard';
+//import { LoggingInterceptor } from './modules/interceptors/logging.interceptor';
 //import { ValidationPipe } from './validation.pipe';
 //import { APP_FILTER } from '@nestjs/core';
 //import { HttpExceptionFilter } from './http-exception.filter';
@@ -36,6 +37,12 @@ import { RolesGuard } from './roles/roles.guard';
     // {
     //   provide: APP_PIPE,
     //   useClass: ValidationPipe,
+    // },
+
+    // set up an interceptor directly
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: LoggingInterceptor,
     // },
 
     //set up guard for this module
