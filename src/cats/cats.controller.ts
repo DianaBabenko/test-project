@@ -13,7 +13,9 @@ import {
   Post,
   Query,
   Redirect,
+  //SetMetadata,
   UseFilters,
+  //UseGuards,
   //UsePipes,
 } from '@nestjs/common';
 //import { Response } from 'express';
@@ -23,12 +25,16 @@ import { CatsService } from './cats.service';
 //import { Cat } from './interfaces/cat.interface';
 import { ForbiddenException } from '../forbidden.exception';
 import { HttpExceptionFilter } from '../http-exception.filter';
-import { JoiValidationPipe } from '../joi-validation.pipe';
-import { ValidationPipe } from '../validation.pipe';
+//import { JoiValidationPipe } from '../joi-validation.pipe';
+//import { ValidationPipe } from '../validation.pipe';
+//import { RolesGuard } from '../roles/roles.guard';
+import { Roles } from '../roles/roles.decorator';
 
 //import { Request } from 'express';
 
 @Controller('cats')
+//@UseGuards(RolesGuard)
+// @UseGuards(new RolesGuard())
 @UseFilters(new HttpExceptionFilter())
 export class CatsController {
   constructor(private catsService: CatsService) {}
@@ -55,8 +61,16 @@ export class CatsController {
   // }
 
   //Pipe is called to validate the post body
+  // @Post()
+  // async create(@Body(new ValidationPipe()) createCatDto: CreateCatDto) {
+  //   this.catsService.create(createCatDto);
+  // }
+
   @Post()
-  async create(@Body(new ValidationPipe()) createCatDto: CreateCatDto) {
+  @Roles('admin')
+  //it's not good practice to use @SetMetadata() directly in your routes
+  //@SetMetadata('roles', ['admin'])
+  async create(@Body() createCatDto: CreateCatDto) {
     this.catsService.create(createCatDto);
   }
 
@@ -104,6 +118,7 @@ export class CatsController {
   }
 
   @Get('ab.*cd')
+  //@UseGuards(RolesGuard)
   find() {
     return 'This route uses a wildcard';
   }

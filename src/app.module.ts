@@ -13,8 +13,9 @@ import { CatsModule } from './cats/cats.module';
 //import { LoggerMiddleware } from './logger.middleware';
 import { CatsController } from './cats/cats.controller';
 import { logger } from './logger.middleware';
-import {APP_PIPE} from "@nestjs/core";
-import {ValidationPipe} from "./validation.pipe";
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './roles/roles.guard';
+//import { ValidationPipe } from './validation.pipe';
 //import { APP_FILTER } from '@nestjs/core';
 //import { HttpExceptionFilter } from './http-exception.filter';
 //import { AllExceptionsFilterExample } from './all-exceptions-filter.filter';
@@ -36,6 +37,12 @@ import {ValidationPipe} from "./validation.pipe";
     //   provide: APP_PIPE,
     //   useClass: ValidationPipe,
     // },
+
+    //set up guard for this module
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule implements NestModule {

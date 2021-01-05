@@ -4,6 +4,7 @@ import { logger } from './logger.middleware';
 //import { HttpExceptionFilter } from './http-exception.filter';
 import { AllExceptionsFilter } from './all-exceptions.filter';
 import { ValidationPipe } from './validation.pipe';
+//import {RolesGuard} from "./roles/roles.guard";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,6 +18,9 @@ async function bootstrap() {
 
   //global scoped pipes
   app.useGlobalPipes(new ValidationPipe());
+
+  //set up a global guard
+  //app.useGlobalGuards(new RolesGuard());
 
   //use global-scoped filter
   //app.useGlobalFilters(new HttpExceptionFilter());
