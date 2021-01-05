@@ -37,6 +37,7 @@ import { TransformInterceptor } from '../modules/interceptors/transform.intercep
 //import { ErrorsInterceptor } from '../modules/interceptors/errors.interceptor';
 //import { CacheInterceptor } from '../modules/interceptors/cache.interceptor';
 import { TimeoutInterceptor } from '../modules/interceptors/timeout.interceptor';
+import {CacheInterceptor} from "../modules/interceptors/cache.interceptor";
 
 //import { Request } from 'express';
 
@@ -52,7 +53,7 @@ export class CatsController {
   // @UseInterceptors(ExcludeNullInterceptor)
   // @UseInterceptors(ErrorsInterceptor)
   // @UseInterceptors(CacheInterceptor)
-  @UseInterceptors(TimeoutInterceptor)
+  // @UseInterceptors(TimeoutInterceptor)
   //@Redirect('cats/ab*cd', 301)
   findAll() {
     const cats = this.catsService.findAll();
