@@ -1,47 +1,27 @@
 import {
   Body,
   Controller,
-  //DefaultValuePipe,
   Get,
-  //Header,
-  //HttpCode,
-  //HttpStatus,
   Param,
-  //ParseBoolPipe,
   ParseIntPipe,
-  //ParseUUIDPipe,
   Post,
   Query,
   Redirect,
-  //Req,
-  //SetMetadata,
   UseFilters,
   UseInterceptors,
-  //UseGuards,
-  //UsePipes,
 } from '@nestjs/common';
-//import { Response } from 'express';
 import { Observable, of } from 'rxjs';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { CatsService } from './cats.service';
-//import { Cat } from './interfaces/cat.interface';
-//import { ForbiddenException } from '../modules/exceptions/forbidden.exception';
 import { HttpExceptionFilter } from '../modules/filters/http-exception.filter';
-//import { JoiValidationPipe } from '../joi-validation.pipe';
-//import { ValidationPipe } from '../validation.pipe';
-//import { RolesGuard } from '../roles/roles.guard';
 import { Roles } from '../roles/roles.decorator';
 import { LoggingInterceptor } from '../modules/interceptors/logging.interceptor';
 import { TransformInterceptor } from '../modules/interceptors/transform.interceptor';
-//import { ExcludeNullInterceptor } from '../modules/interceptors/exclude-null.interceptor';
-//import { ErrorsInterceptor } from '../modules/interceptors/errors.interceptor';
-//import { CacheInterceptor } from '../modules/interceptors/cache.interceptor';
-import { TimeoutInterceptor } from '../modules/interceptors/timeout.interceptor';
-import {CacheInterceptor} from "../modules/interceptors/cache.interceptor";
 
-//import { Request } from 'express';
-
-@Controller('cats')
+@Controller({
+  path: 'cats',
+  //scope: Scope.REQUEST,
+})
 //@UseGuards(RolesGuard)
 //@UseGuards(new RolesGuard())
 //@UseInterceptors(LoggingInterceptor)
@@ -56,9 +36,10 @@ export class CatsController {
   // @UseInterceptors(TimeoutInterceptor)
   //@Redirect('cats/ab*cd', 301)
   findAll() {
-    const cats = this.catsService.findAll();
-
-    return cats.length > 0 ? cats : 'cats not found';
+    //const cats = this.catsService.findAll();
+    //this.catsService.onModuleInit();
+    //return cats.length > 0 ? cats : 'cats not found';
+    return this.catsService.findAll();
   }
 
   // @Post()
